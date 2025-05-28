@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Leaf, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Separator } from "@/components/ui/separator";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:5000";
 
 export default function ComparePage() {
   const [polymer1, setPolymer1] = useState("");
@@ -27,28 +28,37 @@ export default function ComparePage() {
     setError("");
     setResults(null);
 
+    const trimmedPolymer1 = polymer1.trim();
+    const trimmedPolymer2 = polymer2.trim();
+
+    if (!trimmedPolymer1 || !trimmedPolymer2) {
+      setError("Please enter valid polymer names.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const [response1, response2] = await Promise.all([
-        fetch("http://127.0.0.1:5000/predict", {
+        fetch(`${API_BASE}/predict`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ polymerName: polymer1 }),
+          body: JSON.stringify({ polymerName: trimmedPolymer1 }),
         }),
-        fetch("http://127.0.0.1:5000/predict", {
+        fetch(`${API_BASE}/predict`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ polymerName: polymer2 }),
+          body: JSON.stringify({ polymerName: trimmedPolymer2 }),
         }),
       ]);
-
-      const data1 = await response1.json();
-      const data2 = await response2.json();
 
       if (!response1.ok || !response2.ok) {
         setError("One or both polymers not found. Please try different names.");
         setLoading(false);
         return;
       }
+
+      const data1 = await response1.json();
+      const data2 = await response2.json();
 
       const polymer1Data = { name: data1.name, overallScore: data1.overallScore };
       const polymer2Data = { name: data2.name, overallScore: data2.overallScore };
@@ -64,6 +74,7 @@ export default function ComparePage() {
 
       setResults({ polymer1: polymer1Data, polymer2: polymer2Data, recommendation });
     } catch (err) {
+      console.error("API request error:", err);
       setError("API request failed. Check console for details.");
     } finally {
       setLoading(false);
@@ -98,7 +109,7 @@ export default function ComparePage() {
               <CardDescription>Enter two polymer names to compare their sustainability characteristics</CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4" aria-live="polite">
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="polymer-1">First Polymer</Label>
@@ -112,7 +123,7 @@ export default function ComparePage() {
                 </div>
 
                 {error && (
-                  <Alert variant="destructive">
+                  <Alert variant="destructive" aria-live="assertive">
                     <AlertCircle className="h-4 w-4" />
                     <AlertTitle>Error</AlertTitle>
                     <AlertDescription>{error}</AlertDescription>
@@ -120,15 +131,15 @@ export default function ComparePage() {
                 )}
 
                 <Button type="submit" className="w-full bg-green-600 hover:bg-green-700" disabled={loading}>
-                  {loading ? "Comparing..." : "Compare Polymers"}
+                  {loading ? "Comparing... ⏳" : "Compare Polymers"}
                 </Button>
               </form>
             </CardContent>
           </Card>
 
           {results && (
-            <div className="grid grid-cols-2 gap-8">
-              <Card>
+            <div className="grid grid-cols-2 gap-8" aria-live="polite">
+              <Card className={results.polymer1.overallScore >= results.polymer2.overallScore ? "border-2 border-green-600" : ""}>
                 <CardHeader>
                   <CardTitle>{results.polymer1.name}</CardTitle>
                   <CardDescription>Sustainability Score</CardDescription>
@@ -138,7 +149,7 @@ export default function ComparePage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className={results.polymer2.overallScore > results.polymer1.overallScore ? "border-2 border-green-600" : ""}>
                 <CardHeader>
                   <CardTitle>{results.polymer2.name}</CardTitle>
                   <CardDescription>Sustainability Score</CardDescription>
@@ -151,7 +162,7 @@ export default function ComparePage() {
           )}
 
           {results && (
-            <Card className="mt-6">
+            <Card className="mt-6" aria-live="polite">
               <CardContent>
                 <div className="bg-green-50 p-4 rounded-lg text-center">
                   <h4 className="font-medium mb-2">Recommendation</h4>
