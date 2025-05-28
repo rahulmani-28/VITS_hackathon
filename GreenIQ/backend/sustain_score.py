@@ -1,11 +1,11 @@
 from flask import Flask, request, jsonify
 import pandas as pd
 import numpy as np
-from flask_cors import CORS  # ✅ Enable CORS for frontend requests
+from flask_cors import CORS
 
-# Initialize Flask App
 app = Flask(__name__)
-CORS(app)  # ✅ Allow cross-origin requests
+CORS(app, origins=["https://your-frontend-vercel-url.vercel.app"])
+ # ✅ Allow cross-origin requests
 
 # Load sustainability dataset
 try:
