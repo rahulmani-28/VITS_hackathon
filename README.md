@@ -5,12 +5,6 @@ GreenIQ is a React + Flask-based web application that calculates and visualizes 
 
 ---
 
-## 📸 Demo Screenshot
-
-![GreenIQ Sustainability Scoring Interface](./assets/greeniq_ui_screenshot.jpg)
-
----
-
 ## 🧠 How It Works
 
 Users input a polymer name (e.g., *PLA*, *PET*, *Acetyl-DL-carnitine*), and the system:
