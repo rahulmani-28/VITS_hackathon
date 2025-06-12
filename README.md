@@ -46,14 +46,6 @@ Sustainability Score = 0.4 × Biodegradability + 0.3 × (1 - Toxicity) + 0.3 × 
 
 ---
 
-## 🤝 Credits
-
-- Developed by: Thatikonda Vigneshwar and Team
-- ML Guidance: Faculty Mentors and Hackathon Panel
-- Framework inspired by polymer informatics and green chemistry
-
----
-
 ## 📎 Repository
 
 [🔗 GreenIQ GitHub](https://github.com/rahulmani-28/VITS_hackathon)
