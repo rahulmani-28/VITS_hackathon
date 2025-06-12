@@ -56,7 +56,7 @@ Sustainability Score = 0.4 × Biodegradability + 0.3 × (1 - Toxicity) + 0.3 × 
 
 ## 📎 Repository
 
-[🔗 GreenIQ GitHub](https://github.com/rahulmani-28/GreenIQ)
+[🔗 GreenIQ GitHub](https://github.com/rahulmani-28/VITS_hackathon)
 
 ---
 
